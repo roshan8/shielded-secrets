@@ -1,5 +1,5 @@
 <script>
-	import Counter from './Counter.svelte';
+	import Counter from './Secrets.svelte';
 	import welcome from '$lib/images/svelte-welcome.webp';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
 </script>
