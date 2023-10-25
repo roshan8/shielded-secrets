@@ -33,6 +33,11 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@fontsource/fira-mono": "^5.0.8"
+		"@fontsource/fira-mono": "^5.0.8",
+		"axios": "^1.4.0",
+		"flowbite": "^1.8.1",
+		"flowbite-svelte": "^0.44.18",
+		"flowbite-svelte-blocks": "^0.5.1",
+		"flowbite-svelte-icons": "^0.4.4"
 	}
 }
