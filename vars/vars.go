@@ -17,10 +17,10 @@ var (
 )
 
 const (
-	Meta       = "meta"
-	Data       = "data"
-	RegionID   = "regionID"
-	SecretName = "secretName"
+	Meta     = "meta"
+	Data     = "data"
+	RegionID = "regionID"
+	SecretID = "secretID"
 )
 
 func Init() {

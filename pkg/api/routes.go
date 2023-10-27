@@ -23,12 +23,12 @@ func Routes(router chi.Router) {
 }
 
 func initRegionSubRoutes(router chi.Router) {
-	router.Get("/", fetchSecretsHandler)
+	router.Get("/", listSecretsHandler)
 	router.With(secretRequired).Route("/{secretID}", initSecretSubRoutes)
 }
 
 func initSecretSubRoutes(router chi.Router) {
-	// router.Get("/", fetchSecretHandler)
+	router.Get("/", getSecretHandler)
 	// router.Post("/", createSecretHandler)
 	// router.Put("/", updateSecretHandler)
 	// router.Delete("/", deleteSecretHandler)
@@ -38,8 +38,8 @@ func secretRequired(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		regionID := chi.URLParam(r, vars.RegionID)
-		ctx = context.WithValue(ctx, vars.RegionID, regionID)
+		secretID := chi.URLParam(r, vars.SecretID)
+		ctx = context.WithValue(ctx, vars.SecretID, secretID)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
