@@ -26,4 +26,10 @@
    Response: {"data": ["key1"], "meta": ..}
 
 ### TODO
-- [ ] Fix the envelope for API response (especially for meta)
+- [ ] Fix the envelope for API response. (especially for meta)
+- [ ] Support TLS with lets encrypt.
+- [ ] Support basic auth.
+- [ ] Support trusted IP.
+- [ ] Add contributing.md
+- [ ] Embed FE in Go and ship single binary
+- [ ] Add Dockerfile and document instructions for how to deploy this app on prod.

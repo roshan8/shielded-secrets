@@ -13,7 +13,8 @@ import (
 )
 
 func deleteSecretKeyHandler(w http.ResponseWriter, r *http.Request) {
-	region, secretID := getRegionAndSecretID(r)
+	_, secretID := getRegionAndSecretID(r)
+	secret, awsClient := getSecretAndAwsClient(r)
 
 	keyToDelete := r.URL.Query().Get("key")
 	if keyToDelete == "" {
@@ -21,36 +22,23 @@ func deleteSecretKeyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client, err := getAWSClient(region)
-	if err != nil {
-		respond.Fail(w, err)
-		return
-	}
-
-	secretData, err := getSecretData(client, secretID)
-	if err != nil {
-		respond.Fail(w, err)
-		return
-	}
-
-	if _, ok := secretData[keyToDelete]; !ok {
+	if _, ok := secret[keyToDelete]; !ok {
 		log.Info().Msgf("Key '%s' not found in the secret.\n", keyToDelete)
 		respond.Fail(w, errors.New("key not found in the secret"))
 		return
 	}
 
-	delete(secretData, keyToDelete)
+	delete(secret, keyToDelete)
 
-	if err := updateSecretData(client, secretID, secretData); err != nil {
-		log.Warn().Msgf("Error updating secret:", err)
+	if err := updateSecretData(awsClient, secretID, secret); err != nil {
+		log.Warn().Msgf("Error updating secret: %s", err.Error())
 		respond.Fail(w, errors.New("key not found in the secret"))
 		return
 	}
 
 	msg := fmt.Sprintf("Key '%s' has been deleted from the secret '%s'.\n", keyToDelete, secretID)
 	respond.OK(w, msg, nil)
-
-	log.Info().Msgf("Key '%s' has been deleted from the secret '%s'.\n", keyToDelete, secretID)
+	log.Info().Msg(msg)
 }
 
 func getSecretData(client *secretsmanager.SecretsManager, secretID string) (map[string]interface{}, error) {
@@ -61,7 +49,7 @@ func getSecretData(client *secretsmanager.SecretsManager, secretID string) (map[
 
 	secretData := make(map[string]interface{})
 	if err := json.Unmarshal([]byte(*secret.SecretString), &secretData); err != nil {
-		log.Warn().Msgf("Error parsing secret value:", err)
+		log.Warn().Msgf("Error parsing secret value: %s", err.Error())
 		return nil, err
 	}
 
@@ -71,7 +59,7 @@ func getSecretData(client *secretsmanager.SecretsManager, secretID string) (map[
 func updateSecretData(client *secretsmanager.SecretsManager, secretID string, secretData map[string]interface{}) error {
 	updatedSecretValue, err := json.Marshal(secretData)
 	if err != nil {
-		log.Warn().Msgf("Error marshalling updated secret data:", err)
+		log.Warn().Msgf("Error marshalling updated secret data: %s", err.Error())
 		return err
 	}
 

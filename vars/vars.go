@@ -17,10 +17,12 @@ var (
 )
 
 const (
-	Meta     = "meta"
-	Data     = "data"
-	RegionID = "regionID"
-	SecretID = "secretID"
+	Meta      = "meta"
+	Data      = "data"
+	RegionID  = "regionID"
+	SecretID  = "secretID"
+	Secret    = "secret"
+	AwsClient = "awsClient"
 )
 
 func Init() {
