@@ -51,20 +51,23 @@ func regionRequired(next http.Handler) http.Handler {
 		ctx := r.Context()
 		regionID := chi.URLParam(r, vars.RegionID)
 
-		found := false
-		for _, region := range vars.Regions {
-			if region == regionID {
-				found = true
-				break
-			}
-		}
-		if !found {
+		if !isValidRegion(regionID) {
 			respond.Fail(w, errors.Errorf("region %s not found", regionID))
 			return
 		}
 
 		ctx = context.WithValue(ctx, vars.RegionID, regionID)
+
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)
+}
+
+func isValidRegion(regionID string) bool {
+	for _, region := range vars.Regions {
+		if region == regionID {
+			return true
+		}
+	}
+	return false
 }
