@@ -24,3 +24,6 @@
 5. DELETE /secrets/{regionID}/{secret-name}?key="keyName"
    Description: Delete a key
    Response: {"data": ["key1"], "meta": ..}
+
+### TODO
+- [ ] Fix the envelope for API response (especially for meta)

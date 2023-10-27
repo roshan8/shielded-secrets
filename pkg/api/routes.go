@@ -29,9 +29,8 @@ func initRegionSubRoutes(router chi.Router) {
 
 func initSecretSubRoutes(router chi.Router) {
 	router.Get("/", getSecretHandler)
-	// router.Post("/", createSecretHandler)
-	// router.Put("/", updateSecretHandler)
-	// router.Delete("/", deleteSecretHandler)
+	router.Put("/", addSecretKeyHandler)
+	router.Delete("/", deleteSecretKeyHandler)
 }
 
 func secretRequired(next http.Handler) http.Handler {

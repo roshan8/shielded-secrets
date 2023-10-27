@@ -20,13 +20,13 @@ func getSecretHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	secretValue, err := getSecretValue(client, secretID)
+	secretData, err := getSecretData(client, secretID)
 	if err != nil {
 		respond.Fail(w, err)
 		return
 	}
 
-	sanitizedValues, er := stripSecretValues(*secretValue.SecretString)
+	sanitizedValues, er := stripSecretValues(secretData)
 	if er != nil {
 		respond.Fail(w, err)
 		return
