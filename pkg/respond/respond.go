@@ -41,7 +41,7 @@ func WrapPayload(data, meta interface{}) JSON {
 // Common func to send all the error response
 func Fail(w http.ResponseWriter, e error) {
 	log.Error().Err(e).Msgf("Failed to process request: %v", e)
-	SendResponse(w, 500, WrapPayload(nil, e), nil)
+	SendResponse(w, http.StatusBadRequest, WrapPayload(nil, e.Error()), nil)
 }
 
 // SendResponse is a helper function which sends a response with the passed data

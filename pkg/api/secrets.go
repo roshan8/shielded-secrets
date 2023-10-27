@@ -1,9 +1,9 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"shielded-secrets/pkg/respond"
+	"shielded-secrets/vars"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -12,11 +12,9 @@ import (
 )
 
 func fetchSecretsHandler(w http.ResponseWriter, r *http.Request) {
-	// region := chi.URLParam(r, "regionID")
-	region := "us-east-1"
 	var secretNames []string
+	region := r.Context().Value(vars.RegionID).(string)
 
-	// Create a new AWS session.
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(region),
 	})
@@ -26,13 +24,11 @@ func fetchSecretsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create a Secrets Manager client.
 	client := secretsmanager.New(sess)
 
 	// Define parameters for listing secrets.
 	params := &secretsmanager.ListSecretsInput{}
 
-	// List all the secrets.
 	secrets, err := client.ListSecrets(params)
 	if err != nil {
 		log.Error().Msgf("Error listing secrets: %v", err)
@@ -40,9 +36,7 @@ func fetchSecretsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Loop through the secrets and print their names.
 	for _, secret := range secrets.SecretList {
-		fmt.Println(*secret.Name)
 		secretNames = append(secretNames, *secret.Name)
 	}
 
