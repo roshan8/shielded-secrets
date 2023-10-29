@@ -1,9 +1,8 @@
 <script>
    import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, Radio,
-    TableHeadCell, Checkbox, TableSearch, Button, Toast, GradientButton,
-    Drawer, CloseButton, Label, Input, Textarea, P, A,
-    Dropdown, DropdownItem, DropdownDivider, DropdownHeader, Search } from 'flowbite-svelte';
-   import { CheckCircleSolid, ExclamationCircleSolid, FireOutline, CloseCircleSolid, ChevronDownSolid, UserRemoveSolid, InfoCircleSolid } from 'flowbite-svelte-icons';
+    TableHeadCell, Button, Toast, GradientButton,
+    Drawer, CloseButton, Label, Input, Textarea, Dropdown } from 'flowbite-svelte';
+   import { CloseCircleSolid, ChevronDownSolid, InfoCircleSolid } from 'flowbite-svelte-icons';
   import { sineIn } from 'svelte/easing';
    import { onMount } from "svelte";
    import axios from "axios";
@@ -14,20 +13,20 @@
   //  modal variables
   let newKey = ""
   let newValue = ""
-
-   let regionName = "";
-   let selectedRegion = "Select region";
-   let selectedSecret = "Select secret";
-   let secretName = "";
-   let secretNames = [];
-   let secretData = [];
-   let regions = [];
-   let hideCreateSecretDrawer = true;
-   let transitionParams = {
+  let transitionParams = {
     x: -320,
     duration: 200,
     easing: sineIn
   };
+  let hideCreateSecretDrawer = true;
+
+   let selectedRegion = "Select region";
+   let selectedSecret = "Select secret";
+
+   let secretNameList = [];
+   let secretData = [];
+   let regions = [];
+  
 
   async function getRegions() {
     try {
@@ -50,9 +49,9 @@
   async function listSecrets() {
     try {
       const response = await axios.get(`http://localhost:9090/api/${selectedRegion}/`);
-      secretNames = response.data.data;
+      secretNameList = response.data.data;
 
-      if (secretNames.length > 0) {
+      if (secretNameList.length > 0) {
         selectedSecret = "Select secret"
       } else {
         selectedSecret = "no secrets found"
@@ -139,10 +138,6 @@
 
   {#if displayToast}
     <Toast position="bottom-right" color="red">
-      <svelte:fragment slot="icon">
-        <CloseCircleSolid class="w-5 h-5" />
-        <span class="sr-only">Error icon</span>
-      </svelte:fragment>
       {ToastMessage}
     </Toast>
   {/if}
@@ -172,14 +167,14 @@
   <Dropdown class="w-44 p-3 space-y-3 text-sm">
     {#each regions as region}
       <li>
-        <Radio name="regionName" bind:group={regionName} on:change={() => setRegion(region)} on:click={() => setRegion(region)} value={region}>{region}</Radio>
+        <Radio name="regionName" on:change={() => setRegion(region)} on:click={() => setRegion(region)} value={region}>{region}</Radio>
       </li>
     {/each}
   </Dropdown>
 
   <Button>{selectedSecret}<ChevronDownSolid class="w-3 h-3 ml-2 text-white dark:text-white" /></Button>
   <Dropdown class="w-44 p-3 space-y-3 text-sm">
-    {#each secretNames as secretName}
+    {#each secretNameList as secretName}
       <li>
         <Radio name="secretName" bind:group={secretName} on:change={() => setSecret(secretName)} on:click={() => setSecret(secretName)} value={secretName}>{secretName}</Radio>
       </li>
