@@ -1,42 +1,135 @@
 <script>
    import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, Radio,
     TableHeadCell, Checkbox, TableSearch, Button, Toast, GradientButton,
+    Drawer, CloseButton, Label, Input, Textarea, P, A,
     Dropdown, DropdownItem, DropdownDivider, DropdownHeader, Search } from 'flowbite-svelte';
-   import { CheckCircleSolid, ExclamationCircleSolid, FireOutline, CloseCircleSolid, ChevronDownSolid, UserRemoveSolid } from 'flowbite-svelte-icons';
+   import { CheckCircleSolid, ExclamationCircleSolid, FireOutline, CloseCircleSolid, ChevronDownSolid, UserRemoveSolid, InfoCircleSolid } from 'flowbite-svelte-icons';
+  import { sineIn } from 'svelte/easing';
    import { onMount } from "svelte";
    import axios from "axios";
 
    let displayToast = false;
+   let ToastMessage = "";
+
+  //  modal variables
+  let newKey = ""
+  let newValue = ""
+
    let regionName = "";
+   let selectedRegion = "Select region";
+   let selectedSecret = "Select secret";
    let secretName = "";
-   let deletedItem = "";
-   let tableData = [];
+   let secretNames = [];
+   let secretData = [];
+   let regions = [];
+   let hideCreateSecretDrawer = true;
+   let transitionParams = {
+    x: -320,
+    duration: 200,
+    easing: sineIn
+  };
 
-  //  export let tableData = [
-  //   { id: 1, name: "Apple MacBook Pro 17", description: "Laptop" },
-  //   { id: 2, name: "Microsoft Surface Pro", description: "Tab" },
-  //   { id: 3, name: "Magic Mouse 2", description: "Accessary" }
-  // ];
-
-  async function getSecrets() {
+  async function getRegions() {
     try {
-      const response = await axios.get('http://localhost:8080/api/secrets');
-      tableData = response.data.data;
+      const response = await axios.get('http://localhost:9090/api/regions');
+      regions = response.data.data;
     } catch (error) {
       console.error("error fetching secretes", error)
     }
   }
 
-  function deleteSecretItem(item) {
-      displayToast = true;
-      deletedItem = item;
-      setTimeout(() => {
-        displayToast = false;
-      }, 3000);
+  async function getSecret(secretName) {
+    try {
+      const response = await axios.get(`http://localhost:9090/api/${selectedRegion}/${secretName}`);
+      secretData = response.data.data;
+    } catch (error) {
+      console.error("error fetching secretes", error)
+    }
+  }
+
+  async function listSecrets() {
+    try {
+      const response = await axios.get(`http://localhost:9090/api/${selectedRegion}/`);
+      secretNames = response.data.data;
+
+      if (secretNames.length > 0) {
+        selectedSecret = "Select secret"
+      } else {
+        selectedSecret = "no secrets found"
+      }
+
+    } catch (error) {
+      console.error("error fetching secretes", error)
+      selectedSecret = "no secrets found"
+    }
+  }
+
+  async function deleteSecretKey(keyName) {
+    try {
+      const response = await axios.delete(`http://localhost:9090/api/${selectedRegion}/${selectedSecret}?key=${keyName}`);
+      if (response.status == 200) {
+        displayToast = true;
+        ToastMessage = `Item(`+{keyName}+` has been deleted.`
+        setTimeout(() => {
+          displayToast = false;
+        }, 3000);
+        getSecret(selectedSecret);
+      }
+    } catch (error) {
+      console.error("error fetching secretes", error)
+    }
+  }
+
+  async function adddSecretKey(){
+    try {
+      if (selectedRegion == "Select region" || selectedSecret == "Select secret") {
+        ToastMessage = `Please select region and secret.`
+        displayToast = true;
+        return
+      }
+
+      const response = await axios.put(`http://localhost:9090/api/${selectedRegion}/${selectedSecret}`, {
+        key: newKey,
+        value: newValue
+      });
+      if (response.status == 200) {
+        ToastMessage = `Item(`+ newKey +`) has been added to the secret(`+ selectedSecret +`).`
+        console.log(ToastMessage)
+        displayToast = true;
+        hideCreateSecretDrawer = true;
+        setTimeout(() => {
+          displayToast = false;
+        }, 3000);
+        getSecret(selectedSecret);   
+        return
+      }
+    } catch (error) {
+      // TODO: Handle non 2xx in the try block itself
+      console.error("error adding secret key", error)
+      ToastMessage = `Item(`+ newKey +`) already exists in the secret(`+ selectedSecret +`).`
+        displayToast = true;
+        hideCreateSecretDrawer = true;
+        setTimeout(() => {
+          displayToast = false;
+        }, 3000);
+    }
+  }
+
+  function setRegion(regionName) {
+    selectedRegion = regionName;
+    secretData = [];
+    listSecrets();
+  }
+
+  function setSecret(secretName) {
+    selectedSecret = secretName;
+    secretData = [];
+    getSecret(secretName);
   }
 
   onMount(() => {
-    getSecrets();
+    getRegions()
+    listSecrets();
   });
 
  </script>
@@ -45,75 +138,76 @@
 <div>
 
   {#if displayToast}
-    <!-- <Toast position="bottom-right" color="green">
-      <svelte:fragment slot="icon">
-        <CheckCircleSolid class="w-5 h-5" />
-        <span class="sr-only">Check icon</span>
-      </svelte:fragment>
-      Item moved successfully.
-    </Toast> -->
-  
     <Toast position="bottom-right" color="red">
       <svelte:fragment slot="icon">
         <CloseCircleSolid class="w-5 h-5" />
         <span class="sr-only">Error icon</span>
       </svelte:fragment>
-      Item({deletedItem}) has been deleted.
+      {ToastMessage}
     </Toast>
   {/if}
 
-  <Button>Select region<ChevronDownSolid class="w-3 h-3 ml-2 text-white dark:text-white" /></Button>
+  <Drawer transitionType="fly" {transitionParams} bind:hidden={hideCreateSecretDrawer} id="sidebar3">
+    <div class="flex items-center">
+      <h5 id="drawer-label" class="inline-flex items-center mb-6 text-base font-semibold text-gray-500 uppercase dark:text-gray-400">
+        <InfoCircleSolid class="w-4 h-4 mr-2.5" />Contact us
+      </h5>
+      <CloseButton on:click={() => (hideCreateSecretDrawer = true)} class="mb-4 dark:text-white" />
+    </div>
+    <!-- <form action="#" class="mb-6"> -->
+    <form on:submit|preventDefault={() => adddSecretKey()} class="mb-6">
+      <div class="mb-6">
+        <Label for="Key" class="block mb-2">Key</Label>
+        <Input id="secretKey" name="secretKey" bind:value={newKey} required placeholder="Enter secret key." />
+      </div>
+      <div class="mb-6">
+        <Label for="Value" class="mb-2">Value</Label>
+        <Textarea id="secretValue" bind:value={newValue} placeholder="Enter secret value." rows="4" name="secretValue" />
+      </div>
+      <Button on:click={() => adddSecretKey()} type="submit" class="w-full">Save</Button>  
+    </form>
+  </Drawer>
+
+  <Button on:click={() => getRegions()}> {selectedRegion} <ChevronDownSolid class="w-3 h-3 ml-2 text-white dark:text-white" /></Button>
   <Dropdown class="w-44 p-3 space-y-3 text-sm">
-    <li>
-      <Radio name="regionName" bind:group={regionName} value={"us-east-1"}>us-east-1</Radio>
-    </li>
-    <li>
-      <Radio name="regionName" bind:group={regionName} value={"us-east-2"}>us-east-2</Radio>
-    </li>
-    <li>
-      <Radio name="regionName" bind:group={regionName} value={"us-east-3"}>us-east-3</Radio>
-    </li>
+    {#each regions as region}
+      <li>
+        <Radio name="regionName" bind:group={regionName} on:change={() => setRegion(region)} on:click={() => setRegion(region)} value={region}>{region}</Radio>
+      </li>
+    {/each}
   </Dropdown>
 
-  <Button>Select secret<ChevronDownSolid class="w-3 h-3 ml-2 text-white dark:text-white" /></Button>
+  <Button>{selectedSecret}<ChevronDownSolid class="w-3 h-3 ml-2 text-white dark:text-white" /></Button>
   <Dropdown class="w-44 p-3 space-y-3 text-sm">
-    <li>
-      <Radio name="secretName" bind:group={secretName} value={"ingester"}>ingester</Radio>
-    </li>
-    <li>
-      <Radio name="secretName" bind:group={secretName} value={"postal"}>postal</Radio>
-    </li>
-    <li>
-      <Radio name="secretName" bind:group={secretName} value={"nile"}>nile</Radio>
-    </li>
+    {#each secretNames as secretName}
+      <li>
+        <Radio name="secretName" bind:group={secretName} on:change={() => setSecret(secretName)} on:click={() => setSecret(secretName)} value={secretName}>{secretName}</Radio>
+      </li>
+    {/each}
   </Dropdown>
 
-<!-- add few line spaces -->
   <div class="h-4"></div>
   
-  <!-- TODO: Make it searchable -->
   <Table hoverable={true} shadow>
     <TableHead>
-      <TableHeadCell>ID</TableHeadCell>
-      <TableHeadCell>Product name</TableHeadCell>
-      <TableHeadCell>description</TableHeadCell>
+      <TableHeadCell>Key</TableHeadCell>
+      <TableHeadCell>Value</TableHeadCell>
       <TableHeadCell>Action</TableHeadCell>
     </TableHead>
     <TableBody>
-      {#each tableData as item}
+      {#each secretData as item}
       <TableBodyRow>
-        <TableBodyCell>{item.id}</TableBodyCell>
-        <TableBodyCell>{item.name}</TableBodyCell>
-        <TableBodyCell>{item.description}</TableBodyCell>
+        <TableBodyCell>{item}</TableBodyCell>
+        <TableBodyCell>**********</TableBodyCell>
         <TableBodyCell>
-          <Button on:click={() => deleteSecretItem(item.id)} color="red" pill>Delete</Button>
+          <Button on:click={() => deleteSecretKey(item)} color="red" pill>Delete</Button>
         </TableBodyCell>
       </TableBodyRow>
       {/each}
     </TableBody>
   </Table>
 
-  <GradientButton outline pill color="purpleToBlue">Add secret</GradientButton>
+  <GradientButton on:click={() => (hideCreateSecretDrawer = false)} outline pill color="purpleToBlue">Add secret</GradientButton>
 </div>
 
 <style>
