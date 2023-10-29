@@ -34,3 +34,4 @@
 - [ ] Embed FE in Go and ship single binary
 - [ ] Add Dockerfile and document instructions for how to deploy this app on prod.
 - [ ] Support itegration with Slack and notify channels when secret gets updated.
+- [ ] Write unit tests
