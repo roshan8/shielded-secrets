@@ -1,37 +1,15 @@
-# ShieldedSecrets
+# ShieldedSecrets ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square) 
 
-## BE:
+Shielded Secret is an open-source project that aims to simplify and secure secret management using AWS Secret Manager. With this tool, you can empower your users and developers to update secrets without exposing sensitive information. Say goodbye to the wait times and bottlenecks that often occur when SRE/DevOps teams are responsible for secret updates. Shielded Secret is designed to break down those silos and enable smoother deployments.
 
-### API contracts:
+# Motivation
+reddit [thread](https://www.reddit.com/r/devops/comments/17eglv7/tooling_around_updating_aws_secret_manager_secrets/)
 
-1. GET /regions
-   Description: Fetch all the available AWS region names
-   Response: {"data": ["us-east1", ".."], "meta": ..}
+# Installation and usage
+```sh
 
-2. GET /secrets/{regionID}/
-   Description: Fetch all secret names from a region.
-   Response: {"data": ["secret1", "secret2"], "meta": ..}
+```
 
-3. GET /secrets/{regionID}/{secret-name}/
-   Description: Fetch all the key names of a secret
-   Response: {"data": ["key1", "key2"], "meta": ..}
+### Contributing
 
-4. PUT /secrets/{regionID}/{secret-name}
-   Description: Add a new key to existing secret
-   Payload: {"key": "value"} 
-   Response: {"data": ["key1"], "meta": ..}
-
-5. DELETE /secrets/{regionID}/{secret-name}?key="keyName"
-   Description: Delete a key
-   Response: {"data": ["key1"], "meta": ..}
-
-### TODO
-- [ ] Fix the envelope for API response. (especially for meta)
-- [ ] Support TLS with lets encrypt.
-- [ ] Support basic auth.
-- [ ] Support trusted IP.
-- [ ] Add contributing.md
-- [ ] Embed FE in Go and ship single binary
-- [ ] Add Dockerfile and document instructions for how to deploy this app on prod.
-- [ ] Support itegration with Slack and notify channels when secret gets updated.
-- [ ] Write unit tests
+Refer to [CONTRIBUTING.md](https://github.com/roshan8/slo-tracker/blob/main/CONTRIBUTING.md)
