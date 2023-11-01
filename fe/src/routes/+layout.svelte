@@ -4,7 +4,7 @@
 	import './styles.css';
 </script>
 
-<div class="app">
+<div class="app" id="app">
 	<Header />
 
 	<main>
@@ -14,9 +14,15 @@
 
 <style>
 	.app {
-		display: flex;
-		flex-direction: column;
 		min-height: 100vh;
+		height: auto;
+	}
+	:global(.app) {
+		background-color: #f5eeee;
+		transition: background-color 0.3s;
+	}
+	:global(.app.dark-mode) {
+		background-color: #1d3040;
 	}
 
 	main {

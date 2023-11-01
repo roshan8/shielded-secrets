@@ -13,9 +13,13 @@ func Routes(router chi.Router) {
 	router.Get("/", indexHandler)
 	router.Get("/metrics", promhttp.Handler().ServeHTTP)
 
-	router.Get("/regions", regionHandler)
-	router.With(regionRequired).Route("/{regionID}", initRegionSubRoutes)
+	router.Route("/regions", initRegionSubRoutes)
 }
+
+// Routes:
+// /regions - list all regions
+// /regions/{regionID} - list all secrets in a region
+// /regions/{regionID}/{secretID} - get a secret within a region
 
 func initRegionSubRoutes(router chi.Router) {
 	router.Use(allowOnlyIPs(vars.AllowedIPs))
