@@ -21,3 +21,6 @@
 go.work
 
 .vscode/*
+
+shielded-secrets
+.vscode
