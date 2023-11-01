@@ -23,6 +23,11 @@ func Routes(router chi.Router) {
 
 func initRegionSubRoutes(router chi.Router) {
 	router.Use(allowOnlyIPs(vars.AllowedIPs))
+	router.Get("/", regionHandler)
+	router.With(regionRequired).Route("/{regionID}", initRegionSecretSubRoutes)
+}
+
+func initRegionSecretSubRoutes(router chi.Router) {
 	router.Get("/", listSecretsHandler)
 	router.With(secretRequired).Route("/{secretID}", initSecretSubRoutes)
 }
