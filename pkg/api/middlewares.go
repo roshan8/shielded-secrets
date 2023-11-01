@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"net"
 	"net/http"
 	"shielded-secrets/pkg/respond"
 	"shielded-secrets/vars"
@@ -52,4 +53,37 @@ func secretRequired(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)
+}
+
+func allowOnlyIPs(allowedIPs []string) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			clientIP, _, err := net.SplitHostPort(r.RemoteAddr)
+			if err != nil {
+				http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+				return
+			}
+
+			// allow all if no ips are specified
+			if len(allowedIPs) == 0 {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			allowed := false
+			for _, ip := range allowedIPs {
+				if clientIP == ip {
+					allowed = true
+					break
+				}
+			}
+
+			if !allowed {
+				http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		})
+	}
 }

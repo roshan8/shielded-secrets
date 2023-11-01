@@ -43,6 +43,7 @@
       secretData = response.data.data;
     } catch (error) {
       console.error("error fetching secretes", error)
+      // TODO: Handle 403 for requests failing due to auth/allowed ip failures
     }
   }
 
@@ -60,6 +61,7 @@
     } catch (error) {
       console.error("error fetching secretes", error)
       selectedSecret = "no secrets found"
+      // TODO: Handle 403 for requests failing due to auth/allowed ip failures
     }
   }
 
