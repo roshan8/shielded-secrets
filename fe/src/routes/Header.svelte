@@ -1,7 +1,5 @@
 <script>
 	import { page } from '$app/stores';
-	import logo from '$lib/images/svelte-logo.svg';
-	import github from '$lib/images/github.svg';
 	import { MoonSolid, SunSolid } from 'flowbite-svelte-icons';
 
 	let theme = 'light';

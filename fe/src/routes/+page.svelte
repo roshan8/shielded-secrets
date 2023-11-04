@@ -18,7 +18,7 @@
 		Dropdown,
 		Spinner
 	} from 'flowbite-svelte';
-	import { CloseCircleSolid, ChevronDownSolid, PlusOutline } from 'flowbite-svelte-icons';
+	import { ChevronDownSolid, PlusOutline } from 'flowbite-svelte-icons';
 	import { sineIn } from 'svelte/easing';
 	import { onMount } from 'svelte';
 	import axios from 'axios';

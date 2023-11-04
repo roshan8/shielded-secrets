@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"net/http"
+
 	"shielded-secrets/pkg/api"
 	"shielded-secrets/vars"
 
@@ -55,6 +56,7 @@ func startServer() {
 		middleware.RequestID,
 	)
 
+	router.Get("/", api.ServeFrontendHandler)
 	router.Route("/api", api.Routes)
 
 	log.Info().Msg(fmt.Sprintf("starting webserver on port: %d ", vars.Port))

@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+
 	"shielded-secrets/vars"
 
 	"github.com/aws/aws-sdk-go/aws"
