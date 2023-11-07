@@ -66,5 +66,4 @@ func sendFileToClient(w http.ResponseWriter, path string) {
 	contentType := mime.TypeByExtension(filepath.Ext(path))
 	w.Header().Set("Content-Type", contentType)
 	io.Copy(w, file)
-
 }

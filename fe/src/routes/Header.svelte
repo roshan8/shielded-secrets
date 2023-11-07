@@ -28,7 +28,8 @@
 					>Home</a
 				>
 			</li>
-			<li
+			<!-- TODO: Add this later -->
+			<!-- <li
 				aria-current={$page.url.pathname === '/about' ? 'page' : undefined}
 				class="relative h-full"
 			>
@@ -37,7 +38,7 @@
 					class="flex h-full items-center text-[color:var(--color-text)] font-bold text-[0.8rem] uppercase tracking-widest no-underline transition-[color] duration-[0.2s] ease-linear px-2 py-0"
 					>About</a
 				>
-			</li>
+			</li> -->
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
 			<path d="M0,0 L0,3 C0.5,3 0.5,3 1,2 L2,0 Z" />
