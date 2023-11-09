@@ -10,7 +10,7 @@ Reddit [thread](https://www.reddit.com/r/devops/comments/17eglv7/tooling_around_
 
 ### Installation and usage
 ```sh
-# Update env variables in run.sh & execute the binary
+# Update run.sh's env variables before running the script.
 ./run.sh
 ```
 
