@@ -8,14 +8,13 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	app "shielded-secrets"
 	"strings"
-
-	"shielded-secrets/vars"
 )
 
 var frontendFs fs.FS
 
-const defaultHtml = "app.html"
+const defaultHtml = "index.html"
 
 func ServeFrontendHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
@@ -49,7 +48,7 @@ func ServeFrontendHandler(w http.ResponseWriter, r *http.Request) {
 
 func init() {
 	var err error
-	frontendFs, err = fs.Sub(vars.TemplateFs, "fe/build")
+	frontendFs, err = fs.Sub(app.Frontend, "fe/build")
 	if err != nil {
 		log.Fatal("failed to get frontend fs", err)
 	}

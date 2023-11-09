@@ -1,7 +1,7 @@
 /*
 Copyright © 2023 Roshan shetty roshan.aloor@gmail.com
 */
-package cmd
+package main
 
 import (
 	"fmt"

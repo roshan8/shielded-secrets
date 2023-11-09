@@ -15,12 +15,6 @@ limitations under the License.
 */
 package main
 
-import (
-	"shielded-secrets/cmd"
-	"shielded-secrets/vars"
-)
-
 func main() {
-	vars.TemplateFs = Frontend
-	cmd.Execute()
+	Execute()
 }
