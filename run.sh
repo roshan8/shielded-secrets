@@ -1,7 +1,14 @@
 #!/bin/bash
+# prerequisites: npm and go
 
 cd fe
 npm install
 npm run build
 cd ..
-go build cmd && ./app serve
+
+# Enter creds for your AWS account
+export AWS_ACCESS_KEY=""
+export AWS_SECRET_KEY=""
+export ALLOWED_IPS=""
+
+cd cmd && go build -o app && ./app serve
