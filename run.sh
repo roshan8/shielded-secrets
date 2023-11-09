@@ -4,4 +4,4 @@ cd fe
 npm install
 npm run build
 cd ..
-go build -o app && ./app
+go build cmd/ -o app && ./app
