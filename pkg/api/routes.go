@@ -10,9 +10,7 @@ import (
 
 func Routes(router chi.Router) {
 	// Endpoint for prometheus to scrape metrics
-	router.Get("/", indexHandler)
 	router.Get("/metrics", promhttp.Handler().ServeHTTP)
-
 	router.Route("/regions", initRegionSubRoutes)
 }
 

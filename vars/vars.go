@@ -32,7 +32,6 @@ func Init() {
 	AWSAccessKey = os.Getenv("AWS_ACCESS_KEY")
 	AWSSecretKey = os.Getenv("AWS_SECRET_KEY")
 	AllowedIPs = strings.Split(os.Getenv("ALLOWED_IPS"), " ")
-
 	PortStr := os.Getenv("PORT")
 	Port, err = strconv.Atoi(PortStr)
 	if err != nil {
