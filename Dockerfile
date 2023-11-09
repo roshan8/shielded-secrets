@@ -10,14 +10,18 @@ RUN npm run build
 FROM golang:1.20 AS go-builder
 WORKDIR /app
 COPY . .
+RUN mkdir -p /fe/build
 # Copy static files from Svelte build
 COPY --from=svelte-builder /usr/src/app/build /fe/build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build cmd/ .
+RUN cat /fe/build/index.html
+RUN go build cmd
+RUN ls -lha
 
 # Final Stage: Run Go App
 FROM alpine:latest  
 RUN apk --no-cache add ca-certificates
-WORKDIR /root/
+WORKDIR /app/
 COPY --from=go-builder /app/app .
 EXPOSE 9090
-CMD ["./app"]
+RUN chmod a+x ./app
+CMD ["/app/app", "serve"]
